@@ -22,10 +22,35 @@ type PageVariables struct {
 
 func main() {
 	http.HandleFunc("/", HomePage)
+	http.HandleFunc("/status/", ServerHealth)
 	log.Fatal(http.ListenAndServe(":80", nil))
 }
 
 func HomePage(w http.ResponseWriter, r *http.Request){
+
+    now := time.Now() // find the time right now
+	s1 := rand.NewSource(time.Now().UnixNano())
+	r1 := rand.New(s1)
+	r2 := rand.New(s1)
+    HomePageVars := PageVariables{ //store the date and time in a struct
+      Number1: r1.Intn(900),
+	  Number2: r2.Intn(900),
+      Time: now.Format("15:04:05"),
+	  Date: now.Format("02-01-2006"),
+	  Radius: r2.Intn(900)/2,
+    }
+
+    t, err := template.ParseFiles("hello.html") //parse the html file homepage.html
+    if err != nil { // if there is an error
+  	  log.Print("template parsing error: ", err) // log it
+  	}
+    err = t.Execute(w, HomePageVars) //execute the template and pass it the HomePageVars struct to fill in the gaps
+    if err != nil { // if there is an error
+  	  log.Print("template executing error: ", err) //log it
+  	}
+}
+
+func ServerHealth(w http.ResponseWriter, r *http.Request){
 
 	var Data = "data"
 
@@ -39,25 +64,21 @@ func HomePage(w http.ResponseWriter, r *http.Request){
 		}
 
     now := time.Now() // find the time right now
-	s1 := rand.NewSource(time.Now().UnixNano())
-	r1 := rand.New(s1)
-	r2 := rand.New(s1)
-    HomePageVars := PageVariables{ //store the date and time in a struct
-      Number1: r1.Intn(900),
-	  Number2: r2.Intn(900),
+
+    HealthPageVars := PageVariables{ //store the date and time in a struct
       Time: now.Format("15:04:05"),
 	  Date: now.Format("02-01-2006"),
-	  Radius: r2.Intn(900)/2,
 	  Endpointdata: Data,
     }
 
-    t, err := template.ParseFiles("hello.html") //parse the html file homepage.html
+    t, err := template.ParseFiles("health.html") //parse the html file homepage.html
     if err != nil { // if there is an error
   	  log.Print("template parsing error: ", err) // log it
   	}
-    err = t.Execute(w, HomePageVars) //execute the template and pass it the HomePageVars struct to fill in the gaps
+    err = t.Execute(w, HealthPageVars) //execute the template and pass it the HomePageVars struct to fill in the gaps
     if err != nil { // if there is an error
   	  log.Print("template executing error: ", err) //log it
   	}
 }
+
 
