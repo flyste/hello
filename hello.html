@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>My Page</title>
+</head>
+<body>
+<p>Random Number 1 is {{.Number1}}</p>
+<p>Random Number 2 is {{.Number2}}</p>
+<p>And the Date is {{.Date}}</p>
+<p>And the time is {{.Time}}</p>
+</p>
+<p>Here is a nice circle that moves based on the random numbers above:</p>
+<svg width="1000" height="1000">
+  <circle cx={{.Number1}} cy={{.Number2}} r={{.Radius}} stroke="green" stroke-width="4" fill="yellow" />
+</svg>
+</body>
+</html>

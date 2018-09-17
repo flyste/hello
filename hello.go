@@ -1,27 +1,49 @@
 package main
 
 import (
-	"fmt" 
+
 	"time"
+	"log"
 	"math/rand"
-	"os"
+
 	"net/http"
+	"html/template"
 )
 
+type PageVariables struct {
+	Number1         	int
+	Number2				int
+	Radius				int
+	Time         	string
+	Date			string
+}
+
 func main() {
+	http.HandleFunc("/", HomePage)
+	log.Fatal(http.ListenAndServe(":80", nil))
+}
 
-	http.HandleFunc("/", func (w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintf(w, "The current time is: %s\n", time.Now())
-		s1 := rand.NewSource(time.Now().UnixNano())
-		r1 := rand.New(s1)
-		fmt.Fprintf(w, "My favorite number is %d", r1.Intn(100))
-	})
+func HomePage(w http.ResponseWriter, r *http.Request){
 
-	http.ListenAndServe(":80", nil)
-	
-	fmt.Printf("hello, ", os.Args[2])
-	fmt.Println("The current time is: ", time.Now())
+    now := time.Now() // find the time right now
 	s1 := rand.NewSource(time.Now().UnixNano())
 	r1 := rand.New(s1)
-	fmt.Println("My favorite number is", r1.Intn(100))
+	r2 := rand.New(s1)
+    HomePageVars := PageVariables{ //store the date and time in a struct
+      Number1: r1.Intn(900),
+	  Number2: r2.Intn(900),
+      Time: now.Format("15:04:05"),
+	  Date: now.Format("02-01-2006"),
+	  Radius: r2.Intn(900)/2,
+    }
+
+    t, err := template.ParseFiles("hello.html") //parse the html file homepage.html
+    if err != nil { // if there is an error
+  	  log.Print("template parsing error: ", err) // log it
+  	}
+    err = t.Execute(w, HomePageVars) //execute the template and pass it the HomePageVars struct to fill in the gaps
+    if err != nil { // if there is an error
+  	  log.Print("template executing error: ", err) //log it
+  	}
 }
+
