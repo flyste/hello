@@ -5,7 +5,8 @@ import (
 	"time"
 	"log"
 	"math/rand"
-
+	"fmt"
+	"io/ioutil"
 	"net/http"
 	"html/template"
 )
@@ -16,6 +17,7 @@ type PageVariables struct {
 	Radius				int
 	Time         	string
 	Date			string
+	Endpointdata			string
 }
 
 func main() {
@@ -24,6 +26,17 @@ func main() {
 }
 
 func HomePage(w http.ResponseWriter, r *http.Request){
+
+	var Data = "data"
+
+	response, err := http.Get("http://localhost:7070/api/1.0/instances/~/health")
+		if err != nil {
+			fmt.Printf("The HTTP request failed with error %s\n", err)
+		} else {
+			data, _ := ioutil.ReadAll(response.Body)
+			fmt.Println(string(data))
+			Data = string(data)
+		}
 
     now := time.Now() // find the time right now
 	s1 := rand.NewSource(time.Now().UnixNano())
@@ -35,6 +48,7 @@ func HomePage(w http.ResponseWriter, r *http.Request){
       Time: now.Format("15:04:05"),
 	  Date: now.Format("02-01-2006"),
 	  Radius: r2.Intn(900)/2,
+	  Endpointdata: Data,
     }
 
     t, err := template.ParseFiles("hello.html") //parse the html file homepage.html
