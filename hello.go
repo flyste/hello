@@ -18,7 +18,8 @@ type PageVariables struct {
 	Radius				int
 	Time         	string
 	Date			string
-	Endpointdata			string
+	Statusdata			string
+	Versiondat		string
 }
 
 func main() {
@@ -55,7 +56,6 @@ func ServerHealth(w http.ResponseWriter, r *http.Request){
 
 	var healthdata = "data"
 	var version = "version"
-	var serverinfo = "serverinfo"
 	
 	type ServerHealthResponse struct {
 	LLS struct {
@@ -96,14 +96,15 @@ func ServerHealth(w http.ResponseWriter, r *http.Request){
 	
 	healthdata = string(responseObject.LLS.Database.ConnectionCheck)
 	version = string(responseObject.LLS.Version)
-	serverinfo = healthdata + "\n Server Version: " + version
-
+	
     now := time.Now() // find the time right now
 
     HealthPageVars := PageVariables{ //store the date and time in a struct
       Time: now.Format("15:04:05"),
 	  Date: now.Format("02-01-2006"),
-	  Endpointdata: serverinfo,
+	  Statusdata: healthdata,
+	  Versiondat: version,
+	  
     }
 
     t, err := template.ParseFiles("health.html") //parse the html file homepage.html
