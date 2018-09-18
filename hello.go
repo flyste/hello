@@ -3,6 +3,7 @@ package main
 import (
 
 	"time"
+	"encoding/json"
 	"log"
 	"math/rand"
 	"fmt"
@@ -52,23 +53,57 @@ func HomePage(w http.ResponseWriter, r *http.Request){
 
 func ServerHealth(w http.ResponseWriter, r *http.Request){
 
-	var Data = "data"
+	var healthdata = "data"
+	var version = "version"
+	var serverinfo = "serverinfo"
+	
+	type ServerHealthResponse struct {
+	LLS struct {
+		Version          string    `json:"version"`
+		BuildDate        time.Time `json:"buildDate"`
+		BuildVersion     string    `json:"buildVersion"`
+		Branch           string    `json:"branch"`
+		Patch            string    `json:"patch"`
+		FneBuildVersion  string    `json:"fneBuildVersion"`
+		ServerInstanceID string    `json:"serverInstanceID"`
+		Database         struct {
+			ConnectionCheck string `json:"connectionCheck"`
+		} `json:"database"`
+	} `json:"LLS"`
+}
 
+//	response, err := http.Get("http://localhost:7070/api/1.0/instances/~/health")
+//		if err != nil {
+//			fmt.Printf("The HTTP request failed with error %s\n", err)
+//		} else {
+//			data, _ := ioutil.ReadAll(response.Body)
+//			fmt.Println(string(data))
+//			healthdata = string(data)
+//		}
+		
 	response, err := http.Get("http://localhost:7070/api/1.0/instances/~/health")
-		if err != nil {
-			fmt.Printf("The HTTP request failed with error %s\n", err)
-		} else {
-			data, _ := ioutil.ReadAll(response.Body)
-			fmt.Println(string(data))
-			Data = string(data)
-		}
+	if err != nil {
+		fmt.Print(err.Error())
+	}
+
+	responseData, err := ioutil.ReadAll(response.Body)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	var responseObject ServerHealthResponse
+	json.Unmarshal(responseData, &responseObject)
+	
+	healthdata = string(responseObject.LLS.Database.ConnectionCheck)
+	version = string(responseObject.LLS.Version)
+	serverinfo = healthdata + "\n Server Version: " + version
 
     now := time.Now() // find the time right now
 
     HealthPageVars := PageVariables{ //store the date and time in a struct
       Time: now.Format("15:04:05"),
 	  Date: now.Format("02-01-2006"),
-	  Endpointdata: Data,
+	  Endpointdata: serverinfo,
     }
 
     t, err := template.ParseFiles("health.html") //parse the html file homepage.html
