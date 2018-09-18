@@ -20,11 +20,13 @@ type PageVariables struct {
 	Date			string
 	Statusdata			string
 	Versiondat		string
+	FeatureCount string
 }
 
 func main() {
 	http.HandleFunc("/", HomePage)
 	http.HandleFunc("/status/", ServerHealth)
+	http.HandleFunc("/features/", Features)
 	log.Fatal(http.ListenAndServe(":80", nil))
 }
 
@@ -116,5 +118,89 @@ func ServerHealth(w http.ResponseWriter, r *http.Request){
   	  log.Print("template executing error: ", err) //log it
   	}
 }
+
+func Features(w http.ResponseWriter, r *http.Request){
+
+	var featurename = "f1"
+	var featureversion = "1.0"
+	var featurecount = "1"
+	
+	type Feature []struct {
+	ID                  int       `json:"id"`
+	FeatureVersion      string    `json:"featureVersion"`
+	SharedUsed          int       `json:"sharedUsed"`
+	OverdraftCount      int       `json:"overdraftCount"`
+	AssignedReserved    int       `json:"assignedReserved"`
+	OverdraftUsedCount  int       `json:"overdraftUsedCount"`
+	FeatureCount        string    `json:"featureCount"`
+	MeteredReusable     bool      `json:"meteredReusable"`
+	Type                string    `json:"type"`
+	ReceivedTime        time.Time `json:"receivedTime"`
+	FeatureKind         string    `json:"featureKind"`
+	Vendor              string    `json:"vendor"`
+	UnassignedReserved  int       `json:"unassignedReserved"`
+	FeatureID           string    `json:"featureId"`
+	Expiry              string    `json:"expiry"`
+	MeteredUndoInterval int       `json:"meteredUndoInterval"`
+	FeatureName         string    `json:"featureName"`
+	Used                int       `json:"used"`
+	Metered             bool      `json:"metered"`
+	UncappedOverdraft   bool      `json:"uncappedOverdraft"`
+	Reserved            int       `json:"reserved"`
+	Concurrent          bool      `json:"concurrent"`
+	Uncounted           bool      `json:"uncounted"`
+}
+
+//	response, err := http.Get("http://localhost:7070/api/1.0/instances/~/health")
+//		if err != nil {
+//			fmt.Printf("The HTTP request failed with error %s\n", err)
+//		} else {
+//			data, _ := ioutil.ReadAll(response.Body)
+//			fmt.Println(string(data))
+//			healthdata = string(data)
+//		}
+		
+	response, err := http.Get("http://localhost:7070/api/1.0/instances/~/features")
+	if err != nil {
+		fmt.Print(err.Error())
+	}
+
+	responseData, err := ioutil.ReadAll(response.Body)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	var responseObject Feature
+	json.Unmarshal(responseData, &responseObject)
+	
+	for i := 0; i < len(responseObject); i++ {
+			featurename = string(responseObject[i].FeatureName)
+			featureversion = string(responseObject[i].FeatureVersion)
+			featurecount = string(responseObject[i].FeatureCount)
+			}
+	
+
+	
+    now := time.Now() // find the time right now
+
+    HealthPageVars := PageVariables{ //store the date and time in a struct
+      Time: now.Format("15:04:05"),
+	  Date: now.Format("02-01-2006"),
+	  Statusdata: featurename,
+	  Versiondat: featureversion,
+	  FeatureCount: featurecount,
+	  
+    }
+
+    t, err := template.ParseFiles("features.html") //parse the html file homepage.html
+    if err != nil { // if there is an error
+  	  log.Print("template parsing error: ", err) // log it
+  	}
+    err = t.Execute(w, HealthPageVars) //execute the template and pass it the HomePageVars struct to fill in the gaps
+    if err != nil { // if there is an error
+  	  log.Print("template executing error: ", err) //log it
+  	}
+}
+
 
 
