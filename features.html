@@ -5,10 +5,12 @@
 <title>My Page</title>
 </head>
 <body>
-<p>{{.Date}} {{.Time}}</p>
 </P>
-<p>Endpoint returned: {{.Statusdata}}</p>
-<p>Server Version: {{.Versiondat}}</p>
+
+{{range .}}
+	<p>{{.Name}} {{.Version}} {{.Count}}</p>
+{{end}}
+
 </p>
 </body>
 </html>

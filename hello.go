@@ -20,7 +20,10 @@ type PageVariables struct {
 	Date			string
 	Statusdata			string
 	Versiondat		string
-	FeatureCount string
+	FeatCount 		[]string
+	FeatName 		[]string
+	FeatVersion 	[]string
+	
 }
 
 func main() {
@@ -121,9 +124,13 @@ func ServerHealth(w http.ResponseWriter, r *http.Request){
 
 func Features(w http.ResponseWriter, r *http.Request){
 
-	var featurename = "f1"
-	var featureversion = "1.0"
-	var featurecount = "1"
+	type FeatureStruct struct{
+		Name string
+		Version string
+		Count string
+		}
+		
+	
 	
 	type Feature []struct {
 	ID                  int       `json:"id"`
@@ -172,31 +179,33 @@ func Features(w http.ResponseWriter, r *http.Request){
 
 	var responseObject Feature
 	json.Unmarshal(responseData, &responseObject)
+
+	featureslist := make([]FeatureStruct, len(responseObject))
 	
 	for i := 0; i < len(responseObject); i++ {
-			featurename = string(responseObject[i].FeatureName)
-			featureversion = string(responseObject[i].FeatureVersion)
-			featurecount = string(responseObject[i].FeatureCount)
+			featureslist[i].Name = string(responseObject[i].FeatureName)
+			featureslist[i].Version = string(responseObject[i].FeatureVersion)
+			featureslist[i].Count = string(responseObject[i].FeatureCount)
 			}
 	
 
 	
-    now := time.Now() // find the time right now
+//    now := time.Now() // find the time right now
 
-    HealthPageVars := PageVariables{ //store the date and time in a struct
-      Time: now.Format("15:04:05"),
-	  Date: now.Format("02-01-2006"),
-	  Statusdata: featurename,
-	  Versiondat: featureversion,
-	  FeatureCount: featurecount,
+//    HealthPageVars := PageVariables{ //store the date and time in a struct
+//      Time: now.Format("15:04:05"),
+//	  Date: now.Format("02-01-2006"),
+//	  FeatName: featurename,
+//	  FeatVersion: featureversion,
+//	  FeatCount: featurecount,
 	  
-    }
+//    }
 
     t, err := template.ParseFiles("features.html") //parse the html file homepage.html
     if err != nil { // if there is an error
   	  log.Print("template parsing error: ", err) // log it
   	}
-    err = t.Execute(w, HealthPageVars) //execute the template and pass it the HomePageVars struct to fill in the gaps
+    err = t.Execute(w, featureslist) //execute the template and pass it the HomePageVars struct to fill in the gaps
     if err != nil { // if there is an error
   	  log.Print("template executing error: ", err) //log it
   	}
