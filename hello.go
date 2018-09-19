@@ -129,9 +129,7 @@ func Features(w http.ResponseWriter, r *http.Request){
 		Version string
 		Count string
 		Used int
-		}
-		
-	
+		}	
 	
 	type Feature []struct {
 	ID                  int       `json:"id"`
@@ -157,16 +155,7 @@ func Features(w http.ResponseWriter, r *http.Request){
 	Reserved            int       `json:"reserved"`
 	Concurrent          bool      `json:"concurrent"`
 	Uncounted           bool      `json:"uncounted"`
-}
-
-//	response, err := http.Get("http://localhost:7070/api/1.0/instances/~/health")
-//		if err != nil {
-//			fmt.Printf("The HTTP request failed with error %s\n", err)
-//		} else {
-//			data, _ := ioutil.ReadAll(response.Body)
-//			fmt.Println(string(data))
-//			healthdata = string(data)
-//		}
+	}
 		
 	response, err := http.Get("http://localhost:7070/api/1.0/instances/~/features")
 	if err != nil {
@@ -189,19 +178,6 @@ func Features(w http.ResponseWriter, r *http.Request){
 			featureslist[i].Count = string(responseObject[i].FeatureCount)
 			featureslist[i].Used = responseObject[i].Used
 			}
-	
-
-	
-//    now := time.Now() // find the time right now
-
-//    HealthPageVars := PageVariables{ //store the date and time in a struct
-//      Time: now.Format("15:04:05"),
-//	  Date: now.Format("02-01-2006"),
-//	  FeatName: featurename,
-//	  FeatVersion: featureversion,
-//	  FeatCount: featurecount,
-	  
-//    }
 
     t, err := template.ParseFiles("features.html") //parse the html file homepage.html
     if err != nil { // if there is an error
