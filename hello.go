@@ -128,6 +128,7 @@ func Features(w http.ResponseWriter, r *http.Request){
 		Name string
 		Version string
 		Count string
+		Used int
 		}
 		
 	
@@ -186,6 +187,7 @@ func Features(w http.ResponseWriter, r *http.Request){
 			featureslist[i].Name = string(responseObject[i].FeatureName)
 			featureslist[i].Version = string(responseObject[i].FeatureVersion)
 			featureslist[i].Count = string(responseObject[i].FeatureCount)
+			featureslist[i].Used = responseObject[i].Used
 			}
 	
 
