@@ -25,14 +25,12 @@ th {
 	<th>Count</th>
 	<th>Used</th>
 </tr>
-{{range .}}
 <tr>
-	<td><a href={{.FeatureURL}}>{{.Name}}</a></td>
-	<td>{{.Version}}</td>
-	<td>{{.Count}}</td>
-	<td><a href={{.UsedURL}}>{{.Used}}</a></td>
+	<td>{{.FeatureName}}</td>
+	<td>{{.FeatureVersion}}</td>
+	<td>{{.FeatureCount}}</td>
+	<td>{{.Used}}</td>
 </tr>
-{{end}}
 </table>
 </body>
 </html>

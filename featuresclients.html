@@ -20,17 +20,13 @@ th {
 
 <table style="width:100%">
 <tr>
-	<th>Feature</th>
-	<th>Version</th>
+	<th>Hostid</th>
 	<th>Count</th>
-	<th>Used</th>
 </tr>
 {{range .}}
 <tr>
-	<td><a href={{.FeatureURL}}>{{.Name}}</a></td>
-	<td>{{.Version}}</td>
-	<td>{{.Count}}</td>
-	<td><a href={{.UsedURL}}>{{.Used}}</a></td>
+	<td>{{.ClientHostid}}</a></td>
+	<td>{{.ClientCount}}</td>
 </tr>
 {{end}}
 </table>
