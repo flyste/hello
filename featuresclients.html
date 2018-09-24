@@ -22,11 +22,13 @@ th {
 <tr>
 	<th>Hostid</th>
 	<th>Count</th>
+	<th>Borrow Expiration</th>
 </tr>
 {{range .}}
 <tr>
 	<td>{{.ClientHostid}}</td>
 	<td>{{.ClientCount}}</td>
+	<td>{{.Expiry}}</td>
 </tr>
 {{end}}
 </table>

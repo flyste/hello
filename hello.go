@@ -310,6 +310,7 @@ func ClientsFeatureid(w http.ResponseWriter, r *http.Request){
 		ClientID int
 		ClientHostid	string
 		ClientCount		int
+		Expiry			time.Time
 	}
 
 	vars := mux.Vars(r)
@@ -338,6 +339,7 @@ func ClientsFeatureid(w http.ResponseWriter, r *http.Request){
 			clientfeaturelist[i].ClientID = responseObject[i].Client.ID
 			clientfeaturelist[i].ClientHostid = string(responseObject[i].Client.Hostid.HostidValue)
 			clientfeaturelist[i].ClientCount = responseObject[i].UseCount
+			clientfeaturelist[i].Expiry = responseObject[i].Client.Expiry
 	}
 
     t, err := template.ParseFiles("featuresclients.html") //parse the html file homepage.html
